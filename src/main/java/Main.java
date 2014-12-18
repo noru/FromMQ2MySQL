@@ -7,6 +7,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
+import java.util.Date;
 /**
  * Created by xiua on 12/16/2014.
  */
@@ -29,10 +30,17 @@ public class Main {
     public static void main( String[] args )
     {
 
-        System.out.println("task begin");
-        //putMessage("hello there!");
-        Message msg = null;
+        System.out.println("Task begin...");
 
+        //putMessage("hello there!");
+
+        /**
+         * Iterate all the messages in queue, when success push to DB,
+         * delete current message and continue
+         *
+         * Messages that failed stay in Queue and wait to be processed by next task
+        */
+        Message msg = null;
         while ((msg = getMessage()) != null){
             DBManager dm = null;
             try {
@@ -47,7 +55,8 @@ public class Main {
         }
 
         finish();
-        System.out.println("task finished");
+
+        System.out.println("Task finished at" + (new Date()).toString());
 
     }
 
@@ -62,6 +71,7 @@ public class Main {
                 e.printStackTrace();
             }
         }
+        System.out.print("Cleaned up.");
     }
 
     private static Message getMessage() {
@@ -183,9 +193,11 @@ public class Main {
             try {
                 stmt.executeUpdate(String.format("insert into %s values(null, \"%s\")", TABLE_NAME, msg.getMessageBodyAsString()));
             } catch (SQLException e) {
+                System.out.println("Failed execute insert command");
                 e.printStackTrace();
                 return false;
             }
+            System.out.println("Command executed successfully");
             return true;
         }
     }
