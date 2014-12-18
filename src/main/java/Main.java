@@ -29,34 +29,40 @@ public class Main {
 
     public static void main( String[] args )
     {
+        int total = 0, success = 0;
 
         System.out.println("Task begin...");
 
         putMessage("hello there again!");
 
-//        /**
-//         * Iterate all the messages in queue, when success push to DB,
-//         * delete current message and continue
-//         *
-//         * Messages that failed stay in Queue and wait to be processed by next task
-//        */
-//        Message msg = null;
-//        while ((msg = getMessage()) != null){
-//            DBManager dm = null;
-//            try {
-//                dm = DBManager.GetInstance();
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//                System.exit(1);
-//            }
-//            if (dm.putMessageToDB(msg)){
-//                removeMessage(msg);
-//            };
-//        }
-//
-//        finish();
+        /**
+         * Iterate all the messages in queue, when success push to DB,
+         * delete current message and continue
+         *
+         * Messages that failed stay in Queue and wait to be processed by next task
+        */
+        Message msg = null;
+        while ((msg = getMessage()) != null){
+            total++;
+            DBManager dm = null;
+            try {
+                dm = DBManager.GetInstance();
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.out.println("Connect DB failed. Message " + e.getMessage());
+                System.out.println("Exit");
+                System.exit(1);
+            }
+            if (dm.putMessageToDB(msg)){
+                removeMessage(msg);
+                success++;
+            }
+        }
 
-        System.out.println("Task finished at: " + (new Date()).toString());
+        finish();
+
+        System.out.println(String.format("Task finished. %s messages total, %s successfully put to RDS", total, success));
+        System.out.println((new Date()).toString());
 
     }
 
