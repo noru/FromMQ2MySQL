@@ -32,31 +32,31 @@ public class Main {
 
         System.out.println("Task begin...");
 
-        //putMessage("hello there!");
+        putMessage("hello there again!");
 
-        /**
-         * Iterate all the messages in queue, when success push to DB,
-         * delete current message and continue
-         *
-         * Messages that failed stay in Queue and wait to be processed by next task
-        */
-        Message msg = null;
-        while ((msg = getMessage()) != null){
-            DBManager dm = null;
-            try {
-                dm = DBManager.GetInstance();
-            } catch (Exception e) {
-                e.printStackTrace();
-                System.exit(1);
-            }
-            if (dm.putMessageToDB(msg)){
-                removeMessage(msg);
-            };
-        }
+//        /**
+//         * Iterate all the messages in queue, when success push to DB,
+//         * delete current message and continue
+//         *
+//         * Messages that failed stay in Queue and wait to be processed by next task
+//        */
+//        Message msg = null;
+//        while ((msg = getMessage()) != null){
+//            DBManager dm = null;
+//            try {
+//                dm = DBManager.GetInstance();
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//                System.exit(1);
+//            }
+//            if (dm.putMessageToDB(msg)){
+//                removeMessage(msg);
+//            };
+//        }
+//
+//        finish();
 
-        finish();
-
-        System.out.println("Task finished at" + (new Date()).toString());
+        System.out.println("Task finished at: " + (new Date()).toString());
 
     }
 
