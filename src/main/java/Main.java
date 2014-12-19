@@ -33,7 +33,7 @@ public class Main {
 
         System.out.println("Task begin...");
 
-        putMessage("hello there again!");
+        // putMessage("hello there again! haha");
 
         /**
          * Iterate all the messages in queue, when success push to DB,
@@ -77,7 +77,7 @@ public class Main {
                 e.printStackTrace();
             }
         }
-        System.out.print("Cleaned up.");
+        System.out.println("Cleaned up.");
     }
 
     private static Message getMessage() {
@@ -90,9 +90,11 @@ public class Main {
         } catch (Exception e){
             System.out.println("Failed getting message from MQS");
         }
-        System.out.println("Got message.");
-        System.out.println("ID: " + msg.getMessageId());
-        System.out.println("Body: " + msg.getMessageBodyAsString());
+        if (msg != null){
+            System.out.println("Got message.");
+            System.out.println("ID: " + msg.getMessageId());
+            System.out.println("Body: " + msg.getMessageBodyAsString());
+        }
         return msg;
     }
 
