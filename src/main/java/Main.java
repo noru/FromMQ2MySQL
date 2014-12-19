@@ -31,9 +31,13 @@ public class Main {
     {
         int total = 0, success = 0;
 
-        System.out.println("Task begin...");
+        System.out.println("---=== Task begin... ===---");
 
-        // putMessage("hello there again! haha");
+//        putMessage("hello there again! haha");
+//        putMessage("hello there again! haha1");
+//        putMessage("hello there again! haha2");
+//        putMessage("hello there again! haha3");
+//        System.exit(0);
 
         /**
          * Iterate all the messages in queue, when success push to DB,
@@ -61,9 +65,9 @@ public class Main {
 
         finish();
 
-        System.out.println(String.format("Task finished. %s messages total, %s successfully put to RDS", total, success));
-        System.out.println((new Date()).toString());
-
+        System.out.println(String.format("*** Task finished. %s messages total, %s successfully put to RDS", total, success));
+        System.out.println(("***" + new Date()).toString());
+        System.out.println();
     }
 
     private static void finish() {
