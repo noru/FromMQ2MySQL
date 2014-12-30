@@ -1,6 +1,7 @@
 import com.aliyun.mqs.client.CloudQueue;
 import com.aliyun.mqs.client.DefaultMQSClient;
 import com.aliyun.mqs.model.Message;
+import com.mysql.jdbc.StringUtils;
 
 import java.sql.*;
 import java.sql.Connection;
@@ -38,8 +39,8 @@ public class Main {
 //        putMessage("hello there again! haha");
 //        putMessage("hello there again! haha1");
 //        putMessage("hello there again! haha2");
-//        putMessage("type\ncol1,col2\nrow1a,row1b,ra1c");
-//        System.exit(0);
+        putMessage("org\n123,123,col2\nrow1a,row1b , kkasdf");
+        //System.exit(0);
 
         /**
          * Iterate all the messages in queue, when success push to DB,
@@ -161,7 +162,7 @@ public class Main {
                 conn = DriverManager.getConnection(DEBUG ? TEST_MYSQL_URL : MYSQL_URL, USER, PSWD);
                 stmt = conn.createStatement();
                 // temp
-                stmt.execute("create table if not exists flat (ID int(4) not null primary key auto_increment, STR varchar(100));");
+                //stmt.execute("create table if not exists flat (ID int(4) not null primary key auto_increment, STR varchar(100));");
 
             } catch (ClassNotFoundException e) {
                 System.out.println("failed connecting db");
@@ -231,31 +232,84 @@ public class Main {
                 return false;
             }
 
-            // TODO
-//            switch (type){
-//                case "abc":
-//                    break;
-//                case "":
-//                case "":
-//                case "":
-//                case "":
-//                case "":
-//                case "":
-//                case "":
-//            }
 
+            try{
+                switch (type){
+                    // type = table_name
+                    case "org":
+                        stmt.execute(String.format("create table if not exists %s (ID char(24) not null primary key, EXTID varchar(20), NAME varchar(100))", type));
+                        break;
+                    case "dept":
+                        stmt.execute(String.format("create table if not exists %s (ID char(24) not null primary key" +
+                                ", ORGID char(24)" +
+                                ", NAME varchar(100))", type));
+                        break;
+                    case "equipmodel":
+                        stmt.execute(String.format("create table if not exists %s (ID char(24) not null primary key" +
+                                ", ORGID char(24)" +
+                                ", NAME varchar(100)" +
+                                ", DESC varchar(100)" +
+                                ", MODEL varchar(100)" +
+                                ")", type));
+                        break;
+                    case "spot":
+                        stmt.execute(String.format("create table if not exists %s (ID char(24) not null primary key" +
+                                ", ORGID char(24)" +
+                                ", EQUIPMODELID char(24)" +
+                                ", NAME varchar(100)" +
+                                ")", type));
+                        break;
+                    case "equip":
+                        stmt.execute(String.format("create table if not exists %s (ID char(24) not null primary key" +
+                                ", ORGID char(24)" +
+                                ", EQUIPMODELID char(24)" +
+                                ", DEPTID char(24)" +
+                                ", SERIALNO varchar(20" +
+                                ", CHKPTID char(24)" +
+                                ", CHKPTNAME varchar(100)" +
+                                ")", type));
+                        break;
+//                    case "subject":
+//                        stmt.execute(String.format("create table if not exists %s (ID char(24) not null primary key" +
+//                                ", ORGID char(24)" +
+//                                ", EQUIPMODELID char(24)" +
+//                                ", CHKPTID char(24)" +
+//                                ", SPOTID char(24)" +
+//                                ", SUBJECTID char(24)" +
+//                                ", ITEMID char(24)" +
+//                                ", STARTAT datetime" +
+//                                ", EXPIREAT datetime" +
+//                                ", GENAT datetime" +
+//                                ")", type));
+//                        break;
+                    default:
+                        System.out.println("Unknown type: " + type);
+                        return false;
+                }
+                for ( String[] s : rows){
+                    stmt.executeUpdate(MapValueToSQL(type, s));
+                }
 
-
-            try {
-                stmt.executeUpdate(String.format("insert into %s values(null, \"%s\")", TABLE_NAME, msg.getMessageBodyAsString()));
-
-            } catch (SQLException e) {
+            } catch (SQLException e){
                 System.out.println("Failed execute insert command");
                 e.printStackTrace();
                 return false;
             }
+
+
+
             System.out.println("Command executed successfully");
             return true;
+        }
+
+        private String MapValueToSQL(String type, String[] s) {
+
+            ArrayList<String> values = new ArrayList<>();
+            for (String S : s){
+                String temp = "\"" + S.trim() + "\"";
+                values.add(temp);
+            }
+            return String.format("replace into %s values(%s)", type, values.toString().replaceAll("^\\[|\\]$", ""));
         }
     }
 }
