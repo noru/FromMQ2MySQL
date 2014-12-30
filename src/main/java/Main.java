@@ -7,6 +7,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
+import java.util.ArrayList;
 import java.util.Date;
 /**
  * Created by xiua on 12/16/2014.
@@ -30,13 +31,14 @@ public class Main {
     public static void main( String[] args )
     {
         int total = 0, success = 0;
-
+        Date d = new Date();
         System.out.println("---=== Task begin... ===---");
+        System.out.println("***" + d);
 
 //        putMessage("hello there again! haha");
 //        putMessage("hello there again! haha1");
 //        putMessage("hello there again! haha2");
-//        putMessage("hello there again! haha3");
+//        putMessage("type\ncol1,col2\nrow1a,row1b,ra1c");
 //        System.exit(0);
 
         /**
@@ -66,7 +68,7 @@ public class Main {
         finish();
 
         System.out.println(String.format("*** Task finished. %s messages total, %s successfully put to RDS", total, success));
-        System.out.println(("***" + new Date()).toString());
+        System.out.println("***" + ((new Date()).getTime() - d.getTime()) + "ms elapsed.");
         System.out.println();
     }
 
@@ -158,6 +160,7 @@ public class Main {
                 Class.forName("com.mysql.jdbc.Driver");
                 conn = DriverManager.getConnection(DEBUG ? TEST_MYSQL_URL : MYSQL_URL, USER, PSWD);
                 stmt = conn.createStatement();
+                // temp
                 stmt.execute("create table if not exists flat (ID int(4) not null primary key auto_increment, STR varchar(100));");
 
             } catch (ClassNotFoundException e) {
@@ -202,8 +205,50 @@ public class Main {
         }
 
         public boolean putMessageToDB(Message msg) {
+
+            String body = msg.getMessageBodyAsString();
+            String[] split = body.split("\n");
+            String type;
+            String[] cols;
+            ArrayList<String[]> rows = new ArrayList<String[]>();
+
+            // message syntax check
+            try {
+                type = split[0];
+                cols = split[1].split(",");
+                String [] rowStr = split[2].split("\n");
+                int colCount = cols.length;
+                for (String s : rowStr){
+                    String [] row = s.split(",");
+                    if (row.length == colCount){
+                        rows.add(row);
+                    } else {
+                        throw new Exception();
+                    }
+                }
+            } catch (Exception e){
+                System.out.println("Invalid message syntax!");
+                return false;
+            }
+
+            // TODO
+//            switch (type){
+//                case "abc":
+//                    break;
+//                case "":
+//                case "":
+//                case "":
+//                case "":
+//                case "":
+//                case "":
+//                case "":
+//            }
+
+
+
             try {
                 stmt.executeUpdate(String.format("insert into %s values(null, \"%s\")", TABLE_NAME, msg.getMessageBodyAsString()));
+
             } catch (SQLException e) {
                 System.out.println("Failed execute insert command");
                 e.printStackTrace();
