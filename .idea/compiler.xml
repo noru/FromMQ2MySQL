@@ -26,5 +26,8 @@
         <module name="FromMQ2MySQL" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="FromMQ2MySQL" target="1.7" />
+    </bytecodeTargetLevel>
   </component>
 </project>

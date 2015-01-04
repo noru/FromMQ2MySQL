@@ -1,7 +1,6 @@
 import com.aliyun.mqs.client.CloudQueue;
 import com.aliyun.mqs.client.DefaultMQSClient;
 import com.aliyun.mqs.model.Message;
-import com.mysql.jdbc.StringUtils;
 
 import java.sql.*;
 import java.sql.Connection;
@@ -34,7 +33,7 @@ public class Main {
         int total = 0, success = 0;
         Date d = new Date();
         System.out.println("---=== Task begin... ===---");
-        System.out.println("***" + d);
+        System.out.println("*** " + d);
 
 //        // org
 //        putMessage("org\n" +
@@ -288,7 +287,7 @@ public class Main {
         finish();
 
         System.out.println(String.format("*** Task finished. %s messages total, %s successfully put to RDS", total, success));
-        System.out.println("***" + ((new Date()).getTime() - d.getTime()) + "ms elapsed.");
+        System.out.println("*** " + ((new Date()).getTime() - d.getTime()) + "ms elapsed.");
         System.out.println();
     }
 
@@ -362,8 +361,8 @@ public class Main {
 
     private static class DBManager{
 
-        private String TEST_MYSQL_URL = "jdbc:mysql://localhost:8889/anderson";
-        private String MYSQL_DOMAIN = "jdbc:mysql://rds3qvbbr3qvbbr.mysql.rds.aliyuncs.com";
+        private String TEST_MYSQL_URL = "jdbc:mysql://localhost:8889/anderson?useUnicode=true&characterEncoding=utf8";
+        private String MYSQL_DOMAIN = "jdbc:mysql://rds3qvbbr3qvbbr.mysql.rds.aliyuncs.com?useUnicode=true&characterEncoding=utf8";
         private String DB_NAME = "test_mqs";
         private String TABLE_NAME = "flat";
         private String MYSQL_URL = MYSQL_DOMAIN + "/" + DB_NAME;
@@ -471,7 +470,7 @@ public class Main {
                                 ", NAME varchar(100)" +
                                 ", DESCRIPTION varchar(100)" +
                                 ", MODEL varchar(100)" +
-                                ")", type));
+                                ") charset utf8", type));
                         break;
                     case "spot":
                         stmt.execute(String.format("create table if not exists %s (ID char(24) not null primary key" +
